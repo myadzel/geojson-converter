@@ -1,6 +1,6 @@
 {
   "name": "geojson-converter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Convert GeoJSON to GeoJSON (from obsolete specification (aka GJ2008) and back)",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -13,10 +13,10 @@
   "author": "Alexander Myadzel (myadzel@gmail.com)",
   "license": "MIT",
   "dependencies": {
-    "@types/geojson": "^7946.0.10",
     "proj4": "^2.8.0"
   },
   "devDependencies": {
+    "@types/geojson": "^7946.0.10",
     "@types/proj4": "^2.5.2",
     "typescript": "^4.9.3",
     "ts-node": "^10.9.1"
