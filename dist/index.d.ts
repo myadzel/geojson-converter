@@ -12,9 +12,10 @@ interface Crs {
     type: CrsType;
     properties: CrsNamed | CrsLinked;
 }
-type GeoJSONWithCrs = GeoJSON & {
+type GeoJson = GeoJSON;
+type GeoJsonWithCrs = GeoJson & {
     crs: Crs;
 };
-declare const normalize: (object: GeoJSON | GeoJSONWithCrs) => GeoJSON;
-declare const obsolete: (object: GeoJSON, projection?: string, datum?: string) => GeoJSONWithCrs;
+declare const normalize: (object: GeoJson | GeoJsonWithCrs) => GeoJson;
+declare const obsolete: (object: GeoJson, projection?: string, datum?: string) => GeoJsonWithCrs;
 export { normalize, obsolete, };

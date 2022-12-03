@@ -7,10 +7,10 @@ exports.obsolete = exports.normalize = void 0;
 const proj4_1 = __importDefault(require("proj4"));
 // EPSG:4326 (WGS 84, latitude/longitude coordinate system based on the Earth's center of mass,
 // used by the Global Positioning System among others)
-const geoJSONProjection = 'EPSG:4326';
+const geoJsonProjection = 'EPSG:4326';
 // EPSG:3857 (Web Mercator projection used for display by many web-based mapping tools,
 // including Google Maps and OpenStreetMap)
-const geoJSONObsoleteDefaultProjection = 'EPSG:3857';
+const geoJsonWithCrsDefaultProjection = 'EPSG:3857';
 const parseProjectionFromUrn = (urn) => {
     // urn:ogc:def:objectType:EPSG:version:code
     // https://portal.ogc.org/files/?artifact_id=24045
@@ -65,27 +65,27 @@ const convertProjections = (object, fromProjection, toProjection) => {
     }
     return object;
 };
-const normalizeGeoJSONObsolete = (object) => {
+const normalizeGeoJsonWithCrs = (object) => {
     const detectedProjection = getProjectionNameFromCrs(object);
     if (!detectedProjection) {
         throw 'Can\'t detect projection for GeoJSON';
     }
     delete object.crs;
-    return convertProjections(object, detectedProjection, geoJSONProjection);
+    return convertProjections(object, detectedProjection, geoJsonProjection);
 };
 const normalize = (object) => {
     if ('crs' in object) {
-        return normalizeGeoJSONObsolete(object);
+        return normalizeGeoJsonWithCrs(object);
     }
     return object;
 };
 exports.normalize = normalize;
 const obsolete = (object, projection, datum) => {
-    const crsProjection = projection || geoJSONObsoleteDefaultProjection;
+    const crsProjection = projection || geoJsonWithCrsDefaultProjection;
     if (projection && datum) {
         proj4_1.default.defs(projection, datum);
     }
-    const convertedObject = convertProjections(object, geoJSONProjection, crsProjection);
+    const convertedObject = convertProjections(object, geoJsonProjection, crsProjection);
     const projectionCode = crsProjection.split(':').pop();
     return Object.assign(Object.assign({}, convertedObject), { crs: {
             type: 'name',

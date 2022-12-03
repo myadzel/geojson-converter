@@ -25,19 +25,21 @@ interface Crs {
     properties: CrsNamed | CrsLinked,
 }
 
+type GeoJson = GeoJSON;
+
 // GeoJSON with coordinate reference system
 // https://web.archive.org/web/20160827120507/http://geojson.org/geojson-spec.html
-type GeoJSONWithCrs = GeoJSON & {
+type GeoJsonWithCrs = GeoJson & {
     crs: Crs,
 }
 
 // EPSG:4326 (WGS 84, latitude/longitude coordinate system based on the Earth's center of mass,
 // used by the Global Positioning System among others)
-const geoJSONProjection = 'EPSG:4326';
+const geoJsonProjection = 'EPSG:4326';
 
 // EPSG:3857 (Web Mercator projection used for display by many web-based mapping tools,
 // including Google Maps and OpenStreetMap)
-const geoJSONObsoleteDefaultProjection = 'EPSG:3857';
+const geoJsonWithCrsDefaultProjection = 'EPSG:3857';
 
 const parseProjectionFromUrn = (urn: string) => {
     // urn:ogc:def:objectType:EPSG:version:code
@@ -51,13 +53,13 @@ const parseProjectionFromUrn = (urn: string) => {
     }
 };
 
-const getProjectionNameFromCrs = (object: GeoJSONWithCrs): string | undefined => {
+const getProjectionNameFromCrs = (object: GeoJsonWithCrs): string | undefined => {
     if (object.crs.type === 'name') {
         return parseProjectionFromUrn((object.crs.properties as CrsNamed).name);
     }
 };
 
-const convertProjections = (object: GeoJSON | GeoJSONWithCrs, fromProjection: string, toProjection: string) => {
+const convertProjections = (object: GeoJson | GeoJsonWithCrs, fromProjection: string, toProjection: string) => {
     const isPositionCoordinate = (coordinates: Position) => {
         return coordinates.length >= 2 && coordinates.every((coordinate: Number) => {
             return typeof coordinate === 'number';
@@ -107,7 +109,7 @@ const convertProjections = (object: GeoJSON | GeoJSONWithCrs, fromProjection: st
     return object;
 };
 
-const normalizeGeoJSONObsolete = (object: GeoJSONWithCrs) => {
+const normalizeGeoJsonWithCrs = (object: GeoJsonWithCrs) => {
     const detectedProjection = getProjectionNameFromCrs(object);
 
     if (!detectedProjection) {
@@ -116,25 +118,25 @@ const normalizeGeoJSONObsolete = (object: GeoJSONWithCrs) => {
 
     delete object.crs;
 
-    return convertProjections(object, detectedProjection, geoJSONProjection);
+    return convertProjections(object, detectedProjection, geoJsonProjection);
 };
 
-const normalize = (object: GeoJSON | GeoJSONWithCrs): GeoJSON => {
+const normalize = (object: GeoJson | GeoJsonWithCrs): GeoJson => {
     if ('crs' in object) {
-        return normalizeGeoJSONObsolete(object as GeoJSONWithCrs);
+        return normalizeGeoJsonWithCrs(object as GeoJsonWithCrs);
     }
 
     return object;
 };
 
-const obsolete = (object: GeoJSON, projection?: string, datum?: string) => {
-    const crsProjection = projection || geoJSONObsoleteDefaultProjection;
+const obsolete = (object: GeoJson, projection?: string, datum?: string) => {
+    const crsProjection = projection || geoJsonWithCrsDefaultProjection;
 
     if (projection && datum) {
         proj4.defs(projection, datum);
     }
 
-    const convertedObject = convertProjections(object, geoJSONProjection, crsProjection);
+    const convertedObject = convertProjections(object, geoJsonProjection, crsProjection);
 
     const projectionCode = crsProjection.split(':').pop();
 
@@ -146,7 +148,7 @@ const obsolete = (object: GeoJSON, projection?: string, datum?: string) => {
                 name: `urn:ogc:def:crs:EPSG::${projectionCode}`,
             },
         },
-    } as GeoJSONWithCrs;
+    } as GeoJsonWithCrs;
 };
 
 export {
