@@ -10,7 +10,7 @@ Obsolete specifications of GeoJSON (aka GJ2008) allow to specify coordinate refe
 
 This module can convert from obsolete specification (aka GJ2008) to (normal) GeoJSON and back.
 
-Module uses proj4 library to translate coordinates (this allow to pecify the projection name and datum if necessary).
+Module uses [proj4](https://github.com/proj4js/proj4js) library to translate coordinates (this allow to pecify the projection name and datum if necessary).
 
 Usage example
 -------
