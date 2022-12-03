@@ -1,6 +1,6 @@
 {
   "name": "geojson-converter",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Convert GeoJSON to GeoJSON (from obsolete specification (aka GJ2008) and back)",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
